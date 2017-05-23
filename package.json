@@ -1,0 +1,22 @@
+{
+  "name": "arq_rest_api",
+  "version": "1.0.0",
+  "description": "REST API para arquitectura de software",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaoruheanna/arq_rest_api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaoruheanna/arq_rest_api/issues"
+  },
+  "homepage": "https://github.com/kaoruheanna/arq_rest_api#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
