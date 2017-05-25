@@ -1,6 +1,15 @@
+var async = require('async');
+
 var list = function(req,res){
-    var alumnos = ['Kaoru Heanna','Felipe Testi','Martin Aguirre'];
-    res.send({ success: true, data: alumnos });
+    req.models.alumno.findAll().then(alumnos => {
+        var jsonList = alumnos.map(function(model) {
+          return model.toJSON();
+        });
+        res.send({ success: true, data: jsonList });
+    }, function(err){
+        console.log("error list: "+err);
+        res.send({ error: 'internal' });
+    });
 }
 
 var add = function(req,res){
