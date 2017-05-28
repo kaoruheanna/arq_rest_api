@@ -24,9 +24,22 @@ var listCursos = function(materiaId, models, callback){
     );
 };
 
+var alumnosInscriptos = function(cursoId, models, callback){
+    models.inscripcion.inscriptosInCurso(
+        cursoId,
+        function(data){
+            callback(null, data);
+        },
+        function(err){
+            callback(err);
+        }
+    );
+};
+
 var calls = {
     list: list,
-    listCursos: listCursos
+    listCursos: listCursos,
+    alumnosInscriptos: alumnosInscriptos
 }
 
 module.exports = calls;

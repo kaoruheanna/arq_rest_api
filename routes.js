@@ -29,6 +29,15 @@ module.exports = function (app) {
 		});
         //.get(route.alumno.list);
         //.post(route.alumno.add);
+    app.get('/materia/:parentId/curso/:id', function(req,res){
+    	route.materia.alumnosInscriptos(req.params.id, req.models, function(err,data){
+    		if (err){
+    			errorCB(res, err);
+    		} else {
+    			successCB(res,data);
+    		}
+    	});
+    });
 
     app.get('/materia/:id/curso', function(req,res){
     	route.materia.listCursos(req.params.id, req.models, function(err,data){
