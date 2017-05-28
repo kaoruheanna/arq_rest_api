@@ -28,10 +28,10 @@ module.exports = function (Sequelize, sequelize, models) {
 	Inscripcion.belongsTo(models.curso, { foreignKey: { name: 'cursoId', field: 'curso_id', allowNull: false } }); 
 	models.curso.hasMany(Inscripcion, { foreignKey: { name: 'cursoId', field: 'curso_id', allowNull: false } });
 
-	Inscripcion.inscriptosInCurso = function(cursoID, successCB, errorCB){
+	Inscripcion.inscriptosInCurso = function(cursoId, successCB, errorCB){
 		Inscripcion.findAll({
 			where: {
-				cursoId: cursoID	
+				cursoId: cursoId	
 			},
 			include: [ {model: models.alumno }]
 		}).then(inscripciones => {
@@ -39,6 +39,20 @@ module.exports = function (Sequelize, sequelize, models) {
 	          return model.alumno.toJSON();
 	        });
 	        successCB(jsonList);
+	    }, function(err){
+	        errorCB('internal');
+	    });
+	};
+
+	Inscripcion.desinscribir = function(cursoId, alumnoId, successCB, errorCB){
+		Inscripcion.destroy({
+			where: {
+				cursoId: cursoId,
+				alumnoId: alumnoId
+			}
+		}).then(inscripciones => {
+	        console.log("success!!!!");
+	        successCB();
 	    }, function(err){
 	        errorCB('internal');
 	    });

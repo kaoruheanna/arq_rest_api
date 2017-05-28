@@ -36,10 +36,24 @@ var alumnosInscriptos = function(cursoId, models, callback){
     );
 };
 
+var desinscribir = function(cursoId, alumnoId, models, callback){
+    models.inscripcion.desinscribir(
+        cursoId,
+        alumnoId,
+        function(data){
+            callback(null, data);
+        },
+        function(err){
+            callback(err);
+        }
+    );
+};
+
 var calls = {
     list: list,
     listCursos: listCursos,
-    alumnosInscriptos: alumnosInscriptos
+    alumnosInscriptos: alumnosInscriptos,
+    desinscribir: desinscribir
 }
 
 module.exports = calls;
