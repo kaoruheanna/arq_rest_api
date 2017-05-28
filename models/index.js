@@ -21,6 +21,7 @@ function loadDatabase() {
 
     require('./alumno')(Sequelize, sequelize, models);
     require('./materia')(Sequelize, sequelize, models);
+    require('./curso')(Sequelize, sequelize, models);
   
     return {
         db: sequelize,

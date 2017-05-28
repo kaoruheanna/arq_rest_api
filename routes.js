@@ -29,17 +29,26 @@ module.exports = function (app) {
 		});
         //.get(route.alumno.list);
         //.post(route.alumno.add);
+
+    app.get('/materia/:id/curso', function(req,res){
+    	route.materia.listCursos(req.params.id, req.models, function(err,data){
+    		if (err){
+    			errorCB(res, err);
+    		} else {
+    			successCB(res,data);
+    		}
+    	});
+    });
        
-    app.route('/materia')
-        .get( function (req, res) {
-        	route.materia.list(req.models, function(err,data){
-        		if (err){
-        			errorCB(res, err);
-        		} else {
-        			successCB(res,data);
-        		}
-        	});
-		});
+    app.get('/materia', function (req, res) {
+    	route.materia.list(req.models, function(err,data){
+    		if (err){
+    			errorCB(res, err);
+    		} else {
+    			successCB(res,data);
+    		}
+    	});
+	});
 
     // respond with "hello world" when a GET request is made to the homepage
     app.get('/', function (req, res) {

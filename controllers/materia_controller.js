@@ -10,10 +10,23 @@ var list = function(models, callback){
         console.log("error list: "+err);
         callback('internal');
     });
-}
+};
+
+var listCursos = function(materiaId, models, callback){
+    models.curso.listForMateria(
+        materiaId,
+        function(data){
+            callback(null, data);
+        },
+        function(err){
+            callback(err);
+        }
+    );
+};
 
 var calls = {
-    list: list
+    list: list,
+    listCursos: listCursos
 }
 
 module.exports = calls;
