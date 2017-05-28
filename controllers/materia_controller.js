@@ -49,11 +49,38 @@ var desinscribir = function(cursoId, alumnoId, models, callback){
     );
 };
 
+var candidatos = function(materiaId, models, callback){
+    models.inscripcion.candidatosForMateria(
+        materiaId,
+        function(data){
+            callback(null, data);
+        },
+        function(err){
+            callback(err);
+        }
+    );
+};
+
+var inscribir = function(cursoId, alumnoId, models, callback){
+    models.inscripcion.inscribirAlumnoForCurso(
+        cursoId,
+        alumnoId,
+        function(data){
+            callback(null, data);
+        },
+        function(err){
+            callback(err);
+        }
+    )
+};
+
 var calls = {
     list: list,
     listCursos: listCursos,
     alumnosInscriptos: alumnosInscriptos,
-    desinscribir: desinscribir
+    desinscribir: desinscribir,
+    candidatos: candidatos,
+    inscribir: inscribir
 }
 
 module.exports = calls;

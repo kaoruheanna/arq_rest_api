@@ -15,6 +15,10 @@ module.exports = function (Sequelize, sequelize, models) {
 	}, {
 		tableName: 'inscripciones',
 		id: ['entidadId','activoId'],
+		name: {
+      		singular: 'inscripcion',
+	      	plural: 'inscripciones',
+	    },
 		instanceMethods: {
 			serialize: function () {
 				return this;
@@ -57,7 +61,47 @@ module.exports = function (Sequelize, sequelize, models) {
 	        errorCB('internal');
 	    });
 	};
-	
+
+	Inscripcion.candidatosForMateria = function(materiaId, successCB, errorCB){
+		models.alumno.findAll({
+			include: [ 
+				{
+					model: Inscripcion,
+					required: false,
+					include: [
+						{ 
+							model: models.curso,
+							required: false,
+						}
+					]
+				}
+			]
+		}).then(alumnos => {
+	        var jsonList = [];
+	        alumnos.forEach(function(alumno){
+	        	if (!alumno.inscriptoInMateria(materiaId)){
+	        		jsonList.push({
+	        			id: alumno.id,
+	        			padron: alumno.padron,
+	        			apellido: alumno.apellido,
+	        			nombres: alumno.nombres
+	        		});
+	        	}
+	        });
+	        successCB(jsonList);
+	    }, function(err){
+	        errorCB('internal');
+	    });
+	};
+
+	Inscripcion.inscribirAlumnoForCurso = function(cursoId, alumnoId, successCB, errorCB){
+		Inscripcion.create({ cursoId: cursoId, alumnoId: alumnoId }).then(alumno => {
+			successCB();  
+		}, function(err){
+			console.log("err:",err);
+			errorCB('internal');
+		});
+	};
 
 	models.inscripcion = Inscripcion;
 };

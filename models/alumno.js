@@ -18,6 +18,18 @@ module.exports = function (Sequelize, sequelize, models) {
 		instanceMethods: {
 			serialize: function () {
 				return this;
+			},
+			inscriptoInMateria: function(materiaId){
+				if (!this.inscripciones){
+					return false;
+				}
+				for (var i = 0; i < this.inscripciones.length; i++){
+					var inscripcion = this.inscripciones[i];
+					if (inscripcion.curso.materiaId == materiaId){
+						return true;
+					}
+				}
+				return false;
 			}
 		},
 	});

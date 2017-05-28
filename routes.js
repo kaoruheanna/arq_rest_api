@@ -20,22 +20,29 @@ module.exports = function (app) {
 	};
 
     
-    app.route('/alumno')
-    	.get( function (req, res) {
-        	route.alumno.list(req.models, function(err,data){
-        		if (err){
-        			errorCB(res, err);
-        		} else {
-        			successCB(res,data);
-        		}
-        	});
-		});
-        //.get(route.alumno.list);
-        //.post(route.alumno.add);
-
     app.delete('/materia/:parentId/curso/:cursoId/alumno/:alumnoId', function(req,res){
-    	//res.send("elimino alumno:"req.params.alumnoId);
     	route.materia.desinscribir(req.params.cursoId, req.params.alumnoId, req.models, function(err,data){
+    		if (err){
+    			errorCB(res, err);
+    		} else {
+    			successCB(res,data);
+    		}
+    	});
+    });
+
+    // devuelve los alumnos candidatos a inscripcion
+    app.get('/materia/:materiaId/curso/:cursoId/alumno', function(req,res){
+    	route.materia.candidatos(req.params.materiaId, req.models, function(err,data){
+    		if (err){
+    			errorCB(res, err);
+    		} else {
+    			successCB(res,data);
+    		}
+    	});
+    });
+
+    app.post('/materia/:materiaId/curso/:cursoId/alumno', function(req,res){
+    	route.materia.inscribir(req.body.cursoId, req.body.alumnoId, req.models, function(err,data){
     		if (err){
     			errorCB(res, err);
     		} else {
