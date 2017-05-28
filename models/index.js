@@ -1,7 +1,5 @@
 var settings = require('../settings');
-//var Sequelize = require('../node_modules/sequelize/lib/sequelize');
 var Sequelize = require('sequelize');
-//var async = require('async');
 
 function loadDatabase() {
     console.log('Loading database...');
@@ -22,6 +20,7 @@ function loadDatabase() {
     );
 
     require('./alumno')(Sequelize, sequelize, models);
+    require('./materia')(Sequelize, sequelize, models);
   
     return {
         db: sequelize,

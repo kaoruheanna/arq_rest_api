@@ -1,8 +1,8 @@
 var async = require('async');
 
 var list = function(models, callback){
-    models.alumno.findAll().then(alumnos => {
-        var jsonList = alumnos.map(function(model) {
+    models.materia.findAll().then(materias => {
+        var jsonList = materias.map(function(model) {
           return model.toJSON();
         });
         callback(null, jsonList);
