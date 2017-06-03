@@ -3,18 +3,15 @@ module.exports = function (Sequelize, sequelize, models) {
 		alumnoId: {
 	    	type: Sequelize.INTEGER,
 	    	field: 'alumno_id',
-	    	primaryKey: true,
 	    	allowNull: false,
 	  	},
 		cursoId: {
 	    	type: Sequelize.INTEGER,
 	    	field: 'curso_id',
-	    	primaryKey: true,
 	    	allowNull: false,
 	  	},
 	}, {
 		tableName: 'inscripciones',
-		id: ['entidadId','activoId'],
 		name: {
       		singular: 'inscripcion',
 	      	plural: 'inscripciones',
@@ -40,7 +37,7 @@ module.exports = function (Sequelize, sequelize, models) {
 			include: [ {model: models.alumno }]
 		}).then(inscripciones => {
 	        var jsonList = inscripciones.map(function(model) {
-	          return model.alumno.toJSON();
+	          return model.toJSON();
 	        });
 	        successCB(jsonList);
 	    }, function(err){
@@ -48,11 +45,10 @@ module.exports = function (Sequelize, sequelize, models) {
 	    });
 	};
 
-	Inscripcion.desinscribir = function(cursoId, alumnoId, successCB, errorCB){
+	Inscripcion.desinscribir = function(inscripcionId, successCB, errorCB){
 		Inscripcion.destroy({
 			where: {
-				cursoId: cursoId,
-				alumnoId: alumnoId
+				id: inscripcionId
 			}
 		}).then(inscripciones => {
 	        console.log("success!!!!");
