@@ -22,7 +22,7 @@ module.exports = function (app) {
     
     // devuelve los alumnos candidatos a inscripcion
     app.get('/materia/:materiaId/curso/:cursoId/inscripcion', function(req,res){
-    	route.materia.candidatos(req.params.materiaId, req.models, function(err,data){
+    	route.materia.candidatos(req.params.materiaId, req.params.cursoId, req.models, function(err,data){
     		if (err){
     			errorCB(res, err);
     		} else {
@@ -42,7 +42,7 @@ module.exports = function (app) {
     });
 
     app.post('/materia/:materiaId/curso/:cursoId/inscripcion', function(req,res){
-    	route.materia.inscribir(req.body.cursoId, req.body.alumnoId, req.models, function(err,data){
+    	route.materia.inscribir(req.params.cursoId, req.body.alumnoId, req.models, function(err,data){
     		if (err){
     			errorCB(res, err);
     		} else {
@@ -52,16 +52,17 @@ module.exports = function (app) {
     });
 
     app.get('/materia/:parentId/curso/:id', function(req,res){
-    	route.materia.alumnosInscriptos(req.params.id, req.models, function(err,data){
+    	route.materia.getCurso(req.params.id, req.models, function(err,data){
     		if (err){
     			errorCB(res, err);
     		} else {
-    			successCB(res,data);
+                successCB(res,data);
     		}
     	});
     });
 
-    app.get('/materia/:id/curso', function(req,res){
+    //app.get('/materia/:id/curso', function(req,res){
+    app.get('/materia/:id', function(req,res){
     	route.materia.listCursos(req.params.id, req.models, function(err,data){
     		if (err){
     			errorCB(res, err);

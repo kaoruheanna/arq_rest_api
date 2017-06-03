@@ -3,7 +3,9 @@ var async = require('async');
 var list = function(models, callback){
     models.materia.findAll().then(materias => {
         var jsonList = materias.map(function(model) {
-          return model.toJSON();
+            var jsonElement = model.toJSON();
+            jsonElement.link = '/materia/'+jsonElement.id;
+            return jsonElement;
         });
         callback(null, jsonList);
     }, function(err){
@@ -16,6 +18,9 @@ var listCursos = function(materiaId, models, callback){
     models.curso.listForMateria(
         materiaId,
         function(data){
+            data.forEach(function(item){
+                item.link = '/materia/'+materiaId+'/curso/'+item.id;
+            });
             callback(null, data);
         },
         function(err){
@@ -24,16 +29,39 @@ var listCursos = function(materiaId, models, callback){
     );
 };
 
-var alumnosInscriptos = function(cursoId, models, callback){
-    models.inscripcion.inscriptosInCurso(
-        cursoId,
-        function(data){
-            callback(null, data);
+var getCurso = function(cursoId, models, callback){
+    async.waterfall([
+        function(next){
+            models.curso.findById(cursoId).then(curso => {
+                next(null, curso)
+            }, function(err){
+                next('internal');
+            });
         },
-        function(err){
-            callback(err);
+        function(curso, next){
+            models.inscripcion.inscriptosInCurso(
+                cursoId,
+                function(inscriptos){
+                    next(null,curso,inscriptos);
+                },
+                function(err){
+                    next('internal');
+                }
+            );
         }
-    );
+    ], function(err, curso, inscriptos){
+        if (!err){
+            inscriptos.forEach(function(item){
+                item.remove = '/materia/'+curso.materiaId+'/curso/'+curso.id+'/inscripcion/'+item.id;
+            });
+            var data = {
+                curso: curso.toJSON(),
+                inscriptos: inscriptos,
+                link: '/materia/'+curso.materiaId+'/curso/'+curso.id+'/inscripcion'
+            };
+            callback(err,data);
+        }
+    });
 };
 
 var desinscribir = function(inscripcionId, models, callback){
@@ -48,10 +76,14 @@ var desinscribir = function(inscripcionId, models, callback){
     );
 };
 
-var candidatos = function(materiaId, models, callback){
+var candidatos = function(materiaId,cursoId, models, callback){
     models.inscripcion.candidatosForMateria(
         materiaId,
-        function(data){
+        function(candidatos){
+            var data = {
+                candidatos: candidatos,
+                add: '/materia/'+materiaId+'/curso/'+cursoId+'/inscripcion'
+            };
             callback(null, data);
         },
         function(err){
@@ -76,7 +108,7 @@ var inscribir = function(cursoId, alumnoId, models, callback){
 var calls = {
     list: list,
     listCursos: listCursos,
-    alumnosInscriptos: alumnosInscriptos,
+    getCurso: getCurso,
     desinscribir: desinscribir,
     candidatos: candidatos,
     inscribir: inscribir
