@@ -29,20 +29,20 @@ module.exports = function (app) {
         var body = req.body.envelope.body;
         console.log("body:",body);
         if (body.hasOwnProperty('materiasList')){
-            processMateriasList(req.models, res);
+            materiasList(req.models, res);
+
+        } else if (body.hasOwnProperty('cursosList')){
+            cursosList(body.cursosList, req.models, res);
+
+        } else if (body.hasOwnProperty('getCurso')){
+            getCurso(body.getCurso, req.models, res);
+
         } else {
             res.send('Hola Mundo');    
         }
-        
-        
-        /*
-        var obj = {name: req.body.body.nombre, Surname: req.body.body.apellido};
-        var xml = builder.buildObject(obj);
-        res.send(xml);
-        */
     })
 
-    var processMateriasList = function(models, res){
+    var materiasList = function(models, res){
         route.materia.list(models, function(err,data){
             if (err){
                 errorCB(res, err);
@@ -51,6 +51,28 @@ module.exports = function (app) {
             }
         });
     }
+
+    var cursosList = function(args, models, res){
+        console.log("args:",args);
+        route.materia.listCursos(args.materiaId, models, function(err,data){
+            if (err){
+                errorCB(res, err);
+            } else {
+                successCB(res,data);
+            }
+        });
+    };
+
+    var getCurso = function(args, models, res){
+        route.materia.getCurso(args.cursoId, models, function(err,data){
+            if (err){
+                errorCB(res, err);
+            } else {
+                successCB(res,data);
+            }
+        });
+    };
+    
     /*
     // devuelve los alumnos candidatos a inscripcion
     app.get('/materia/:materiaId/curso/:cursoId/inscripcion', function(req,res){
@@ -83,35 +105,7 @@ module.exports = function (app) {
     	});
     });
 
-    app.get('/materia/:parentId/curso/:id', function(req,res){
-    	route.materia.getCurso(req.params.id, req.models, function(err,data){
-    		if (err){
-    			errorCB(res, err);
-    		} else {
-                successCB(res,data);
-    		}
-    	});
-    });
+    
 
-    //app.get('/materia/:id/curso', function(req,res){
-    app.get('/materia/:id', function(req,res){
-    	route.materia.listCursos(req.params.id, req.models, function(err,data){
-    		if (err){
-    			errorCB(res, err);
-    		} else {
-    			successCB(res,data);
-    		}
-    	});
-    });
-       
-    app.get('/materia', function (req, res) {
-    	route.materia.list(req.models, function(err,data){
-    		if (err){
-    			errorCB(res, err);
-    		} else {
-    			successCB(res,data);
-    		}
-    	});
-	});
     */
 };

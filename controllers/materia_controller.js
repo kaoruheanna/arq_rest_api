@@ -17,9 +17,6 @@ var listCursos = function(materiaId, models, callback){
     models.curso.listForMateria(
         materiaId,
         function(data){
-            data.forEach(function(item){
-                item.link = '/materia/'+materiaId+'/curso/'+item.id;
-            });
             callback(null, data);
         },
         function(err){
@@ -50,13 +47,9 @@ var getCurso = function(cursoId, models, callback){
         }
     ], function(err, curso, inscriptos){
         if (!err){
-            inscriptos.forEach(function(item){
-                item.remove = '/materia/'+curso.materiaId+'/curso/'+curso.id+'/inscripcion/'+item.id;
-            });
             var data = {
                 curso: curso.toJSON(),
                 inscriptos: inscriptos,
-                link: '/materia/'+curso.materiaId+'/curso/'+curso.id+'/inscripcion'
             };
             callback(err,data);
         }

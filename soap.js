@@ -1,5 +1,3 @@
-//var xml2js = require('xml2js');
-//var builder = new xml2js.Builder();
 var express = require('express');
 var app = express();
 var settings = require('./settings');
@@ -26,16 +24,6 @@ app.use(xmlparser({
     normalizeTags: false
 }));
 router(app);
-/*
-app.post('/', function (req, res) {
-    var envelope = req.body.envelope;
-    console.log("envelope:",envelope);
-
-    var obj = {name: req.body.body.nombre, Surname: req.body.body.apellido};
-    var xml = builder.buildObject(obj);
-    res.send(xml);
-})
-*/
 
 app.listen(settings.port, function () {
 	console.log( "Escuchando en el puerto " + settings.port );
