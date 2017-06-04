@@ -4,7 +4,6 @@ var list = function(models, callback){
     models.materia.findAll().then(materias => {
         var jsonList = materias.map(function(model) {
             var jsonElement = model.toJSON();
-            jsonElement.link = '/materia/'+jsonElement.id;
             return jsonElement;
         });
         callback(null, jsonList);

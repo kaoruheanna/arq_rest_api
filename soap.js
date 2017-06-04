@@ -1,9 +1,9 @@
-var xml2js = require('xml2js');
-var builder = new xml2js.Builder();
+//var xml2js = require('xml2js');
+//var builder = new xml2js.Builder();
 var express = require('express');
 var app = express();
 var settings = require('./settings');
-//var bodyParser = require('body-parser');
+var router = require('./router');
 var xmlparser = require('express-xml-bodyparser');
 var dbAbstraction = require('./models/').init();
 app.use(function (req, res, next) { // to load the db models for each request
@@ -20,25 +20,22 @@ app.use(function(req, res, next){ // to allow requests
     next();
 });
 app.use(express.Router());
-//app.use(bodyParser.json({ limit: '100mb' }));
-app.use(xmlparser({explicitArray: false}));
-//routes(app);
-
-// respond with "hello world" when a GET request is made to the homepage
-app.get('/', function (req, res) {
-    var obj = {name: "Super", Surname: "Man", age: 23};
-    var xml = builder.buildObject(obj);
-    res.send(xml);
-    //res.send('HOLA MUNDO!')
-})
-
+app.use(xmlparser({
+    explicitArray: false,
+    normalize: false,
+    normalizeTags: false
+}));
+router(app);
+/*
 app.post('/', function (req, res) {
-    console.log("recibi:",req.body.body);
+    var envelope = req.body.envelope;
+    console.log("envelope:",envelope);
+
     var obj = {name: req.body.body.nombre, Surname: req.body.body.apellido};
     var xml = builder.buildObject(obj);
     res.send(xml);
-    //res.send('HOLA MUNDO!')
 })
+*/
 
 app.listen(settings.port, function () {
 	console.log( "Escuchando en el puerto " + settings.port );
