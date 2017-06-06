@@ -68,13 +68,12 @@ var desinscribir = function(inscripcionId, models, callback){
     );
 };
 
-var candidatos = function(materiaId,cursoId, models, callback){
+var candidatos = function(materiaId, models, callback){
     models.inscripcion.candidatosForMateria(
         materiaId,
         function(candidatos){
             var data = {
-                candidatos: candidatos,
-                add: '/materia/'+materiaId+'/curso/'+cursoId+'/inscripcion'
+                candidatos: candidatos
             };
             callback(null, data);
         },

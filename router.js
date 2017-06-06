@@ -19,7 +19,7 @@ module.exports = function (app) {
 	var errorCB = function(res, error){
         var obj = {
             success: false,
-            error: 'internal'
+            error: error
         };
         var xml = builder.buildObject(obj);
         res.send(xml);
@@ -27,7 +27,6 @@ module.exports = function (app) {
 
     app.post('/', function (req, res) {
         var body = req.body.envelope.body;
-        console.log("body:",body);
         if (body.hasOwnProperty('materiasList')){
             materiasList(req.models, res);
 
@@ -36,6 +35,15 @@ module.exports = function (app) {
 
         } else if (body.hasOwnProperty('getCurso')){
             getCurso(body.getCurso, req.models, res);
+
+        } else if (body.hasOwnProperty('getCandidatos')){
+            getCandidatosForMateria(body.getCandidatos, req.models, res);
+
+        } else if (body.hasOwnProperty('desinscribir')){
+            desinscribir(body.desinscribir, req.models, res);
+
+        } else if (body.hasOwnProperty('inscribir')){
+            inscribir(body.inscribir, req.models, res);
 
         } else {
             res.send('Hola Mundo');    
@@ -53,7 +61,6 @@ module.exports = function (app) {
     }
 
     var cursosList = function(args, models, res){
-        console.log("args:",args);
         route.materia.listCursos(args.materiaId, models, function(err,data){
             if (err){
                 errorCB(res, err);
@@ -72,40 +79,41 @@ module.exports = function (app) {
             }
         });
     };
-    
-    /*
-    // devuelve los alumnos candidatos a inscripcion
-    app.get('/materia/:materiaId/curso/:cursoId/inscripcion', function(req,res){
-    	route.materia.candidatos(req.params.materiaId, req.params.cursoId, req.models, function(err,data){
-    		if (err){
-    			errorCB(res, err);
-    		} else {
-    			successCB(res,data);
-    		}
-    	});
-    });
 
-    app.delete('/materia/:parentId/curso/:cursoId/inscripcion/:inscripcionId', function(req,res){
-        route.materia.desinscribir(req.params.inscripcionId, req.models, function(err,data){
+    // devuelve los alumnos candidatos a inscripcion
+    var getCandidatosForMateria = function(args, models, res){
+        if (!args.materiaId){
+            errorCB(res,'missing-args');
+        } else {
+            route.materia.candidatos(args.materiaId, models, function(err,data){
+                if (err){
+                    errorCB(res, err);
+                } else {
+                    successCB(res,data);
+                }
+            });    
+        }
+        
+    };
+
+    var desinscribir = function(args, models, res){
+        route.materia.desinscribir(args.inscripcionId, models, function(err,data){
             if (err){
                 errorCB(res, err);
             } else {
                 successCB(res,data);
             }
         });
-    });
-
-    app.post('/materia/:materiaId/curso/:cursoId/inscripcion', function(req,res){
-    	route.materia.inscribir(req.params.cursoId, req.body.alumnoId, req.models, function(err,data){
+    };
+    
+    var inscribir = function(args, models, res){
+    	route.materia.inscribir(args.cursoId, args.alumnoId, models, function(err,data){
     		if (err){
     			errorCB(res, err);
     		} else {
     			successCB(res,data);
     		}
     	});
-    });
+    };
 
-    
-
-    */
 };
