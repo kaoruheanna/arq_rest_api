@@ -1,3 +1,5 @@
+var async = require('async');
+
 module.exports = function (Sequelize, sequelize, models) {
 	var Inscripcion = sequelize.define('inscripcion', {
 		alumnoId: {
@@ -91,12 +93,48 @@ module.exports = function (Sequelize, sequelize, models) {
 	};
 
 	Inscripcion.inscribirAlumnoForCurso = function(cursoId, alumnoId, successCB, errorCB){
-		Inscripcion.create({ cursoId: cursoId, alumnoId: alumnoId }).then(alumno => {
-			successCB();  
-		}, function(err){
-			console.log("err:",err);
-			errorCB('internal');
-		});
+		async.waterfall([
+	        function(callback){
+	            models.curso.findById(cursoId).then(curso => {
+	                callback(null, curso)
+	            }, function(err){
+	                callback('internal');
+	            });
+	        },
+	        function(curso, callback){
+	        	Inscripcion.findAll({
+	        		where: {
+	        			alumnoId: alumnoId
+	        		},
+	        		include: [ {model: models.curso }]
+	        	}).then(inscripciones => {
+	        		var error = null;
+	        		if (inscripciones && inscripciones.length){
+	        			inscripciones.forEach(function(item){
+	        				if (item.curso.materiaId == curso.materiaId){
+	        					error = 'materia-repetida';
+	        				}
+	        			});
+	        		}
+	        		callback(error);
+				}, function(err){
+        			callback('internal');
+    			});
+	        },
+	        function(callback){
+	        	Inscripcion.create({ cursoId: cursoId, alumnoId: alumnoId }).then(inscripcion => {
+					callback(null,inscripcion.toJSON());  
+				}, function(err){
+					callback('internal');
+				});
+	        }
+	    ], function(err,data){
+	    	if (!err){
+	    		successCB(data);  
+			} else {
+				errorCB(err);
+			};
+	    });
 	};
 
 	models.inscripcion = Inscripcion;

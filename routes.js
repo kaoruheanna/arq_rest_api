@@ -15,7 +15,7 @@ module.exports = function (app) {
 	var errorCB = function(res, error){
 		res.send({
 			success: false,
-			error: 'internal'
+			error: error
 		});
 	};
 
